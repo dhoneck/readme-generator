@@ -3,42 +3,42 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 
 // Gather README Information From User
-function askQuestions() {
+function init() {
   inquirer
     .prompt([
       {
         type: 'input',
-        name: 'name',
+        name: 'Title',
         message: 'What is the title for the project:',
       },
       {
         type: 'input',
-        name: 'description',
+        name: 'Description',
         message: 'What is the description for the project:',
       },
       {
         type: 'input',
-        name: 'installation',
+        name: 'Installation',
         message: 'What are the installation instructions:',
       },
       {
         type: 'input',
-        name: 'usage',
+        name: 'Usage',
         message: 'What is the usage information:',
       },
       {
         type: 'input',
-        name: 'contribution',
+        name: 'Contributing',
         message: 'What are the contribution guidelines:',
       },
       {
         type: 'input',
-        name: 'test',
+        name: 'Tests',
         message: 'What are the test instructions:',
       },
       {
         type: 'list',
-        name: 'license',
+        name: 'License',
         message: 'What license does this application follow:',
         choices: [
           'None',
@@ -57,18 +57,43 @@ function askQuestions() {
           'The Unlicense',
         ]
       },
+      {
+        type: 'input',
+        name: 'GitHub',
+        message: 'What is your GitHub username:',
+      },
+      {
+        type: 'input',
+        name: 'Email',
+        message: 'What is your email:',
+      },
     ])
     .then((data) => {
-      console.log(data);
+      writeToFile('README.md', data);
     });
 }
 
-// TODO: Create a function to write README file
-function writeToFile(fileName, data) {}
+// TODO: Add table of contents
+// TODO: Add license icon and description
+// TODO: Add error checking
+function writeToFile(fileName, data) {
+  fileContent = '';
+  for (const [key, value] of Object.entries(data)) {
+    if (key == 'Title') {
+      fileContent += '# ' + value + '\n\n';
+    } else if (key != 'Email' && key != 'GitHub') {
+      fileContent += '## ' + key + '\n';
+      fileContent += value + '\n\n';
+    }
+  }
+  fileContent += '## Questions\n';
+  fileContent += `[${data['GitHub']}](https://github.com/${data['GitHub']})\n\n`;
+  fileContent += data['Email'] + '\n';
 
-// Initialize app
-function init () {
-  askQuestions();
-};
+  fs.writeFile(fileName, fileContent, (err) =>
+    err ? console.log(err) : console.log('README created successfully!')
+  );
+}
 
+// Initialize App
 init();
