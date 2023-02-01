@@ -1,8 +1,8 @@
-// Import Libraries
+// Import libraries
 const inquirer = require('inquirer');
 const fs = require('fs');
 
-// Gather README Information From User
+// Gather README information from user
 function init() {
   inquirer
     .prompt([
@@ -73,27 +73,58 @@ function init() {
     });
 }
 
-// TODO: Add table of contents
 // TODO: Add license icon and description
 // TODO: Add error checking
 function writeToFile(fileName, data) {
-  fileContent = '';
+  var fileContent = '';
+  var tableOfContents = 'Table of Contents' + '\n';
+  var questionsSection = '';
+
+  // Combine GitHub and email into a contact section
+  var gitHub = data['GitHub'];
+  var email = data['Email'];
+  if (gitHub || email) {
+    questionsSection = 'Contact me at:' + '\n';
+    if (gitHub) {
+      questionsSection += `* GitHub - [${data['GitHub']}](https://github.com/${data['GitHub']})` + '\n';
+    }
+    if (email) {
+      questionsSection += `* Email - ${data['Email']}` + '\n';
+    }
+    data['Questions'] = questionsSection;
+  }
+  // Delete properties now that they have been merged into a new section
+  delete data['GitHub'];
+  delete data['Email'];
+  
+  // Loop through properties to generate table of contents
+  var index = 1;
   for (const [key, value] of Object.entries(data)) {
-    if (key == 'Title') {
-      fileContent += '# ' + value + '\n\n';
-    } else if (key != 'Email' && key != 'GitHub') {
-      fileContent += '## ' + key + '\n';
-      fileContent += value + '\n\n';
+    if (key != 'Title' && key != 'Description') {
+      tableOfContents += `${index}. [${key}](#${key.toLowerCase()})` + '\n'
+      index++;
     }
   }
-  fileContent += '## Questions\n';
-  fileContent += `[${data['GitHub']}](https://github.com/${data['GitHub']})\n\n`;
-  fileContent += data['Email'] + '\n';
 
+  // Combine properties to create the file content
+  fileContent += `# ${data['Title']}` + '\n\n';
+  fileContent += '## Description' + '\n';
+  fileContent += `${data['Description']}` + '\n\n';
+  fileContent += tableOfContents + '\n\n';
+  delete data['Title'];
+  delete data['Description']
+
+   // Loop through remaining properties to generate content for README
+  for (const [key, value] of Object.entries(data)) {
+    fileContent += '## ' + key + '\n';
+    fileContent += value + '\n\n';
+  }
+
+  // Log status of README file creation
   fs.writeFile(fileName, fileContent, (err) =>
-    err ? console.log(err) : console.log('README created successfully!')
+    err ? console.log(err) : console.log('README.md created successfully!')
   );
 }
 
-// Initialize App
+// Initialize app
 init();
