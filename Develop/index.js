@@ -1,6 +1,7 @@
 // Import libraries
 const inquirer = require('inquirer');
 const fs = require('fs');
+const generateMarkdown= require('./utils/generateMarkdown');
 
 // Gather README information from user
 function init() {
@@ -69,59 +70,16 @@ function init() {
       },
     ])
     .then((data) => {
-      writeToFile('README.md', data);
+      writeToFile('README.md', generateMarkdown(data));
     });
 }
 
 // TODO: Add license icon and description
 // TODO: Add error checking
 function writeToFile(fileName, data) {
-  var fileContent = '';
-  var tableOfContents = 'Table of Contents' + '\n';
-  var questionsSection = '';
-
-  // Combine GitHub and email into a contact section
-  var gitHub = data['GitHub'];
-  var email = data['Email'];
-  if (gitHub || email) {
-    questionsSection = 'Contact me at:' + '\n';
-    if (gitHub) {
-      questionsSection += `* GitHub - [${data['GitHub']}](https://github.com/${data['GitHub']})` + '\n';
-    }
-    if (email) {
-      questionsSection += `* Email - ${data['Email']}` + '\n';
-    }
-    data['Questions'] = questionsSection;
-  }
-  // Delete properties now that they have been merged into a new section
-  delete data['GitHub'];
-  delete data['Email'];
-  
-  // Loop through properties to generate table of contents
-  var index = 1;
-  for (const [key, value] of Object.entries(data)) {
-    if (key != 'Title' && key != 'Description') {
-      tableOfContents += `${index}. [${key}](#${key.toLowerCase()})` + '\n'
-      index++;
-    }
-  }
-
-  // Combine properties to create the file content
-  fileContent += `# ${data['Title']}` + '\n\n';
-  fileContent += '## Description' + '\n';
-  fileContent += `${data['Description']}` + '\n\n';
-  fileContent += tableOfContents + '\n\n';
-  delete data['Title'];
-  delete data['Description']
-
-   // Loop through remaining properties to generate content for README
-  for (const [key, value] of Object.entries(data)) {
-    fileContent += '## ' + key + '\n';
-    fileContent += value + '\n\n';
-  }
 
   // Log status of README file creation
-  fs.writeFile(fileName, fileContent, (err) =>
+  fs.writeFile(fileName, data, (err) =>
     err ? console.log(err) : console.log('README.md created successfully!')
   );
 }
