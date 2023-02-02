@@ -16,7 +16,7 @@ It is important to create README files to your projects but they can be time con
 You must install Node.JS (I used version 16.19.0) on your computer and enter 'npm install inquirer@8.2.4' with command line to install the required module.
 
 ## Usage
-Run 'node <path/to/index.js>' with command line, fill in prompts, and see the generated README.md file in your working directory. Check out this [demo](https://drive.google.com/file/d/1K63L6tsjTbRJM4-6-3mat_zNY8S9hUj-/view?usp=share_link).
+Run 'node <path/to/index.js>' with command line, fill in prompts, and see the generated README.md file in your working directory. Check out this [demo](https://drive.google.com/file/d/1D7A-sR66mLsls-MSPM51gsmjVbln0U1v/view?usp=share_link).
 
 ## License
 This project is covered by the following license: [MIT License](https://opensource.org/licenses/MIT)
