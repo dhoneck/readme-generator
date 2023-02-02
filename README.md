@@ -2,7 +2,7 @@
 # README Generator
 
 ## Description
-It is important to create README files to your projects but they can be time consuming to create. This Node.JS application makes it easy to create simple and professional README files for your projects. From building this application, I learned how to use npm to install a module (inquirer) that allows users to add input to the program via command line.
+It is important to add README files to your projects but they can be time consuming to create. This Node.JS application makes it easy to create simple and professional README files for your projects. From building this application, I learned how to use npm to install a module (inquirer) that allows users to add input to the program via command line.
 
 ## Table of Contents
 1. [Installation](#installation)
