@@ -5,10 +5,11 @@ const { licenses, generateMarkdown } = require('./utils/generateMarkdown.js');
 
 // Validate that input is not empty
 const validateInput = async (input) => {
-  if (input == '') {
-    return 'No input entered. Try again.';
+  // Use Regex to check that input is not whitespace
+  if (/([^\s])/.test(input)) {
+    return true;  
   }
-  return true;
+  return 'No input entered. Try again.';
 }
 
 // Gather README information from user

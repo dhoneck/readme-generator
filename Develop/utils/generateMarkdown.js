@@ -16,7 +16,7 @@ licenses = [
   'The Unlicense',
 ];
 
-// Get markdown for license badge
+// Create markdown for license badge
 function renderLicenseBadge(license) {
   // Get link to badge image
   var imgURL = '';
@@ -88,7 +88,7 @@ function renderLicenseLink(license) {
   }
 }
 
-// Get the license section of README
+// Create markdown for the license section
 function renderLicenseSection(license) {
   if (license == 'None') {
     return '';
@@ -96,26 +96,26 @@ function renderLicenseSection(license) {
   return `This project is covered by the following license: [${license}](${renderLicenseLink(license)})`;
 }
 
-// Generate markdown for README
+// Create all markdown for README
 function generateMarkdown(data) {
-  var fileContent = '';
-  var tableOfContents = '';
-  var questionsSection = '';
+  // Store the markdown that will be returned
+  var markdownContent = '';
 
-  // Save license name and replace license section with more details
+  // Save license name and replace license data with either markdown or empty string if no license is used
   var license = data['License'];
   data['License'] = renderLicenseSection(license);
   
-  // Combine GitHub and email into a contact section
+  // Combine GitHub and email into a new questions section if they exist
   var gitHub = data['GitHub'];
   var email = data['Email'];
   if (gitHub || email) {
+    var questionsSection = '';
     questionsSection = 'Contact me at:' + '\n';
     if (gitHub) {
       questionsSection += `* GitHub - [${data['GitHub']}](https://github.com/${data['GitHub']})` + '\n';
     }
     if (email) {
-      questionsSection += `* Email - ${data['Email']}` + '\n';
+      questionsSection += `* Email - ${data['Email']}`;
     }
     data['Questions'] = questionsSection;
   }
@@ -123,11 +123,22 @@ function generateMarkdown(data) {
   delete data['GitHub'];
   delete data['Email'];
   
-  // Loop through properties to generate table of contents
+  // Add license badge, title, and description to markdown content
+  markdownContent += renderLicenseBadge(license);
+  markdownContent += `# ${data['Title']}` + '\n\n';
+  markdownContent += '## Description' + '\n';
+  markdownContent += `${data['Description']}` + '\n\n';
+
+  // Delete properties now that they have been added to markdown content
+  delete data['Title'];
+  delete data['Description'];
+
+  // Create a table of contents by adding non-empty data properties
   var index = 1;
+  var tableOfContents = '';
   for (const [key, value] of Object.entries(data)) {
-    if (key != 'Title' && key != 'Description' && value != '') {
-      if (index == 1) {
+    if (value != '') { // Only add non-empty strings to table of contents
+      if (index == 1) { // Create table of contents header
         tableOfContents += '## Table of Contents' + '\n';
       }
       tableOfContents += `${index}. [${key}](#${key.toLowerCase()})` + '\n';
@@ -135,23 +146,19 @@ function generateMarkdown(data) {
     }
   }
 
-  // Add information to file content
-  fileContent += renderLicenseBadge(license);
-  fileContent += `# ${data['Title']}` + '\n\n';
-  fileContent += '## Description' + '\n';
-  fileContent += `${data['Description']}` + '\n\n';
-  fileContent += tableOfContents + '\n\n';
-  delete data['Title'];
-  delete data['Description'];
+  // Add table of contents to makedown content
+  markdownContent += tableOfContents + '\n';
 
-  // Loop through remaining properties to generate content for README
+  // Add remaining sections to makedown content
   for (const [key, value] of Object.entries(data)) {
     if (value != '') {
-      fileContent += '## ' + key + '\n';
-      fileContent += value + '\n\n';
+      markdownContent += '## ' + key + '\n';
+      markdownContent += value + '\n\n';
     }
   }
-  return fileContent;
+
+  // Return the markdown
+  return markdownContent;
 }
 
 module.exports = {
